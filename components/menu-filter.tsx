@@ -1,6 +1,7 @@
 "use client";
 
 import { menuCategories } from "@/lib/menu-data";
+import { useLanguage } from "@/lib/i18n";
 
 interface MenuFilterProps {
   selectedCategory: string;
@@ -8,6 +9,8 @@ interface MenuFilterProps {
 }
 
 export function MenuFilter({ selectedCategory, onCategoryChange }: MenuFilterProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="flex flex-wrap gap-2 justify-center">
       {menuCategories.map((category) => (
@@ -20,7 +23,7 @@ export function MenuFilter({ selectedCategory, onCategoryChange }: MenuFilterPro
               : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
           }`}
         >
-          {category}
+          {t(`category.${category}`)}
         </button>
       ))}
     </div>

@@ -1,13 +1,20 @@
 export interface MenuItem {
   id: string;
   name: string;
+  name_km?: string | null;
   description: string;
+  description_km?: string | null;
   price: number;
   category: string;
-  image?: string;
+  image?: string | null;
   hot?: boolean;
   iced?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
+
+export type MenuItemInsert = Omit<MenuItem, 'id' | 'created_at' | 'updated_at'>;
+export type MenuItemUpdate = Partial<MenuItemInsert>;
 
 export const menuCategories = [
   "All",
@@ -18,188 +25,4 @@ export const menuCategories = [
   "Pastries"
 ] as const;
 
-export const menuItems: MenuItem[] = [
-  {
-    id: "1",
-    name: "Espresso",
-    description: "Rich and bold single shot of pure espresso",
-    price: 3.50,
-    category: "Espresso",
-    image: "/pic/Chocolate_Cream.jpg",
-    hot: true,
-  },
-  {
-    id: "2",
-    name: "Americano",
-    description: "Espresso diluted with hot water for a smooth finish",
-    price: 4.00,
-    category: "Espresso",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "3",
-    name: "Cappuccino",
-    description: "Espresso with steamed milk and a thick layer of foam",
-    price: 4.50,
-    category: "Espresso",
-    image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=600&auto=format&fit=crop",
-    hot: true,
-  },
-  {
-    id: "4",
-    name: "Latte",
-    description: "Smooth espresso with steamed milk and light foam",
-    price: 4.75,
-    category: "Espresso",
-    image: "https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "5",
-    name: "Flat White",
-    description: "Double shot espresso with velvety microfoam",
-    price: 5.00,
-    category: "Espresso",
-    image: "https://images.unsplash.com/photo-1585494156145-1c60a4fe952b?w=600&auto=format&fit=crop",
-    hot: true,
-  },
-  {
-    id: "6",
-    name: "Mocha",
-    description: "Rich chocolate and espresso with steamed milk",
-    price: 5.25,
-    category: "Espresso",
-    image: "https://images.unsplash.com/photo-1607681034540-2c46cc71896d?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "7",
-    name: "Drip Coffee",
-    description: "Freshly brewed classic coffee",
-    price: 3.00,
-    category: "Coffee",
-    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&auto=format&fit=crop",
-    hot: true,
-  },
-  {
-    id: "8",
-    name: "Cold Brew",
-    description: "Smooth, slow-steeped cold coffee concentrate",
-    price: 4.50,
-    category: "Coffee",
-    image: "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=600&auto=format&fit=crop",
-    iced: true,
-  },
-  {
-    id: "9",
-    name: "Pour Over",
-    description: "Hand-crafted single origin coffee",
-    price: 5.50,
-    category: "Coffee",
-    image: "https://images.unsplash.com/photo-1545665225-b23b99e4d45e?w=600&auto=format&fit=crop",
-    hot: true,
-  },
-  {
-    id: "10",
-    name: "Green Tea",
-    description: "Delicate and refreshing Japanese green tea",
-    price: 3.50,
-    category: "Tea",
-    image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "11",
-    name: "Chai Latte",
-    description: "Spiced black tea with steamed milk",
-    price: 4.75,
-    category: "Tea",
-    image: "https://images.unsplash.com/photo-1578899952107-9d9d94d0c87b?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "12",
-    name: "Earl Grey",
-    description: "Classic black tea with bergamot",
-    price: 3.50,
-    category: "Tea",
-    image: "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?w=600&auto=format&fit=crop",
-    hot: true,
-  },
-  {
-    id: "13",
-    name: "Caramel Macchiato",
-    description: "Vanilla-flavored latte with caramel drizzle",
-    price: 5.50,
-    category: "Specialty",
-    image: "https://images.unsplash.com/photo-1599639957043-f3aa5c986398?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "14",
-    name: "Vanilla Latte",
-    description: "Classic latte with sweet vanilla syrup",
-    price: 5.00,
-    category: "Specialty",
-    image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "15",
-    name: "Hazelnut Latte",
-    description: "Creamy latte with hazelnut flavor",
-    price: 5.00,
-    category: "Specialty",
-    image: "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=600&auto=format&fit=crop",
-    hot: true,
-    iced: true,
-  },
-  {
-    id: "16",
-    name: "Croissant",
-    description: "Buttery, flaky French pastry",
-    price: 3.75,
-    category: "Pastries",
-    image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&auto=format&fit=crop",
-  },
-  {
-    id: "17",
-    name: "Blueberry Muffin",
-    description: "Moist muffin packed with fresh blueberries",
-    price: 4.00,
-    category: "Pastries",
-    image: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600&auto=format&fit=crop",
-  },
-  {
-    id: "18",
-    name: "Chocolate Croissant",
-    description: "Flaky croissant filled with rich chocolate",
-    price: 4.25,
-    category: "Pastries",
-    image: "https://images.unsplash.com/photo-1590080876351-cd8b40348f0e?w=600&auto=format&fit=crop",
-  },
-  {
-    id: "19",
-    name: "Cinnamon Roll",
-    description: "Warm, gooey cinnamon roll with cream cheese frosting",
-    price: 4.50,
-    category: "Pastries",
-    image: "https://images.unsplash.com/photo-1582047300975-0fa23b1c9097?w=600&auto=format&fit=crop",
-  },
-  {
-    id: "20",
-    name: "Banana Bread",
-    description: "Homemade banana bread, moist and delicious",
-    price: 3.50,
-    category: "Pastries",
-    image: "https://images.unsplash.com/photo-1589193608669-e0d4e4d9e8ce?w=600&auto=format&fit=crop",
-  },
-];
+export const menuItems: MenuItem[] = [];
