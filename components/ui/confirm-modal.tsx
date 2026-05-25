@@ -32,23 +32,23 @@ export function ConfirmModal({
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 dark:bg-red-950 mb-4">
             <AlertTriangle className="h-7 w-7 text-red-600 dark:text-red-400" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
-          <p className="text-sm text-muted-foreground">{message}</p>
+          <h3 className="text-xl font-bold text-foreground mb-2 font-sans">{title}</h3>
+          <p className="text-base text-muted-foreground leading-relaxed font-medium">{message}</p>
         </div>
         <div className="flex gap-3 px-6 pb-6">
           <button
             onClick={onCancel}
             disabled={loading}
-            className="flex-1 py-2.5 rounded-lg font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-3.5 rounded-xl font-bold bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base cursor-pointer border-2 border-border/40"
           >
             {cancelLabel}
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 py-2.5 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base cursor-pointer shadow-md"
           >
-            {loading && <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-r-transparent" />}
+            {loading && <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-white border-r-transparent" />}
             {loading ? "Deleting..." : confirmLabel}
           </button>
         </div>

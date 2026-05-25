@@ -1,29 +1,18 @@
-import { createClient } from '@/lib/supabase/server';
+import { query } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { verifyAuth } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const supabase = await createClient();
-    
-    const { data: menuItems, error } = await supabase
-      .from('menu_items')
-      .select('*')
-      .order('category', { ascending: true })
-      .order('name', { ascending: true });
+    const result = await query(
+      'SELECT * FROM menu_items ORDER BY category ASC, name ASC'
+    );
 
-    if (error) {
-      console.error('Error fetching menu items:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch menu items' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(menuItems);
+    return NextResponse.json(result.rows);
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Error fetching menu items:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch menu items' },
       { status: 500 }
     );
   }
@@ -31,12 +20,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    // Check authentication
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
     
-    // Check if user is authenticated
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
+    if (!token || !verifyAuth(token)) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -44,26 +32,38 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    
-    const { data: newItem, error } = await supabase
-      .from('menu_items')
-      .insert([body])
-      .select()
-      .single();
 
-    if (error) {
-      console.error('Error creating menu item:', error);
+    // Validate required fields
+    const { name, description, price, category } = body;
+    if (!name || !description || price === undefined || !category) {
       return NextResponse.json(
-        { error: 'Failed to create menu item' },
-        { status: 500 }
+        { error: 'Missing required fields: name, description, price, category' },
+        { status: 400 }
       );
     }
 
-    return NextResponse.json(newItem, { status: 201 });
+    const result = await query(
+      `INSERT INTO menu_items (name, name_km, description, description_km, price, category, image, hot, iced)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING *`,
+      [
+        name,
+        body.name_km || null,
+        description,
+        body.description_km || null,
+        price,
+        category,
+        body.image || null,
+        body.hot || false,
+        body.iced || false,
+      ]
+    );
+
+    return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Error creating menu item:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to create menu item' },
       { status: 500 }
     );
   }

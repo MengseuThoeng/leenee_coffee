@@ -1,23 +1,33 @@
 "use client";
 
-import { useLanguage, Locale } from "@/lib/i18n";
-import { Globe } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 export function LanguageSwitcher() {
-  const { locale, setLocale, t } = useLanguage();
-
-  const toggleLanguage = () => {
-    setLocale(locale === "en" ? "km" : "en");
-  };
+  const { locale, setLocale } = useLanguage();
 
   return (
-    <button
-      onClick={toggleLanguage}
-      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors text-sm font-medium"
-      title={locale === "en" ? "ប្ដូរទៅភាសាខ្មែរ" : "Switch to English"}
-    >
-      <Globe className="h-4 w-4" />
-      <span>{locale === "en" ? "ខ្មែរ" : "EN"}</span>
-    </button>
+    <div className="flex items-center gap-1.5 p-1 rounded-full bg-secondary/35 border border-border/30 backdrop-blur-md shadow-inner">
+      <button
+        onClick={() => setLocale("en")}
+        className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+          locale === "en"
+            ? "bg-gold-gradient text-primary-foreground shadow-[0_2px_8px_rgba(203,163,79,0.25)]"
+            : "text-muted-foreground hover:text-foreground hover:bg-secondary/20"
+        }`}
+      >
+        EN
+      </button>
+      <button
+        onClick={() => setLocale("km")}
+        className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold transition-all duration-300 cursor-pointer leading-normal ${
+          locale === "km"
+            ? "bg-gold-gradient text-primary-foreground shadow-[0_2px_8px_rgba(203,163,79,0.25)] font-sans font-bold"
+            : "text-muted-foreground hover:text-foreground hover:bg-secondary/20"
+        }`}
+      >
+        ខ្មែរ
+      </button>
+    </div>
   );
 }
+

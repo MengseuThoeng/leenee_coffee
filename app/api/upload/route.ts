@@ -1,14 +1,17 @@
-import { createClient } from '@/lib/supabase/server';
+import { uploadImage } from '@/lib/minio';
 import { NextResponse } from 'next/server';
+import { verifyAuth } from '@/lib/auth';
+
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    // Check authentication
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
     
-    // Check if user is authenticated
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
+    if (!token || !verifyAuth(token)) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -25,37 +28,38 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate unique filename
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `menu/${fileName}`;
-
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from('leenee_coffee_image')
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false
-      });
-
-    if (error) {
-      console.error('Error uploading image:', error);
+    // Validate file type
+    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Failed to upload image' },
-        { status: 500 }
+        { error: `Invalid file type. Allowed: ${ALLOWED_MIME_TYPES.join(', ')}` },
+        { status: 400 }
       );
     }
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('leenee_coffee_image')
-      .getPublicUrl(filePath);
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit` },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ url: publicUrl });
+    // Convert file to buffer
+    const buffer = await file.arrayBuffer();
+    const fileBuffer = Buffer.from(buffer);
+
+    // Generate unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `menu/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+    // Upload to MinIO
+    const url = await uploadImage(fileName, fileBuffer, file.type);
+
+    return NextResponse.json({ url });
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Error uploading image:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to upload image' },
       { status: 500 }
     );
   }

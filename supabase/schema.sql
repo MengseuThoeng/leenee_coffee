@@ -14,37 +14,8 @@ CREATE TABLE IF NOT EXISTS menu_items (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Enable Row Level Security
-ALTER TABLE menu_items ENABLE ROW LEVEL SECURITY;
-
--- Policy: Anyone can read menu items
-CREATE POLICY "Anyone can view menu items"
-  ON menu_items
-  FOR SELECT
-  TO public
-  USING (true);
-
--- Policy: Only authenticated users can insert
-CREATE POLICY "Authenticated users can insert menu items"
-  ON menu_items
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
-
--- Policy: Only authenticated users can update
-CREATE POLICY "Authenticated users can update menu items"
-  ON menu_items
-  FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
-
--- Policy: Only authenticated users can delete
-CREATE POLICY "Authenticated users can delete menu items"
-  ON menu_items
-  FOR DELETE
-  TO authenticated
-  USING (true);
+-- Note: RLS policies removed for self-hosted PostgreSQL setup
+-- Authorization handled at application layer instead
 
 -- Create index for category filtering
 CREATE INDEX idx_menu_items_category ON menu_items(category);
